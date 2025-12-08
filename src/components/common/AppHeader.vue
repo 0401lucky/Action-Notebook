@@ -131,7 +131,8 @@ const isActive = (name: string) => {
   
   @include until-sm {
     height: 56px;
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-sm);
+    gap: var(--spacing-xs);
   }
 }
 
@@ -141,6 +142,7 @@ const isActive = (name: string) => {
   gap: var(--spacing-sm);
   cursor: pointer;
   user-select: none;
+  flex-shrink: 0;
 
   .logo-icon-wrapper {
     width: 36px;
@@ -150,10 +152,19 @@ const isActive = (name: string) => {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     transition: transform var(--transition-bounce);
+    
+    @include until-sm {
+      width: 32px;
+      height: 32px;
+    }
   }
 
   .logo-icon {
     font-size: 20px;
+    
+    @include until-sm {
+      font-size: 18px;
+    }
   }
 
   .logo-text {
@@ -181,6 +192,9 @@ const isActive = (name: string) => {
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-inner);
   border: 1px solid var(--border-color-light);
+  flex: 1;
+  justify-content: center;
+  max-width: 600px;
   
   @include until-sm {
     gap: 0;
@@ -188,6 +202,14 @@ const isActive = (name: string) => {
     box-shadow: none;
     border: none;
     padding: 0;
+    max-width: none;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
@@ -224,16 +246,17 @@ const isActive = (name: string) => {
   }
   
   @include until-sm {
-    padding: 8px;
+    padding: 6px;
     background: transparent !important;
     box-shadow: none !important;
+    flex-shrink: 0;
     
     .nav-label {
       display: none;
     }
 
     .nav-icon {
-      font-size: 1.4em;
+      font-size: 1.2em;
     }
 
     &.active {
@@ -258,6 +281,11 @@ const isActive = (name: string) => {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  flex-shrink: 0;
+  
+  @include until-sm {
+    gap: var(--spacing-xs);
+  }
 }
 
 // 用户区域样式
