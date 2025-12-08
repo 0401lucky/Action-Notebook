@@ -36,15 +36,16 @@ interface NavItem {
   name: string
   label: string
   icon: string
+  hideOnMobile?: boolean
 }
 
 const navItems: NavItem[] = [
   { path: '/dashboard', name: 'dashboard', label: '首页', icon: '🏠' },
   { path: '/home', name: 'home', label: '今日', icon: '📝' },
   { path: '/pomodoro', name: 'pomodoro', label: '专注', icon: '🍅' },
-  { path: '/journals', name: 'journals', label: '日记本', icon: '📖' },
+  { path: '/journals', name: 'journals', label: '日记本', icon: '📖', hideOnMobile: true },
   { path: '/archive', name: 'archive', label: '归档', icon: '📚' },
-  { path: '/stats', name: 'stats', label: '统计', icon: '📊' }
+  { path: '/stats', name: 'stats', label: '统计', icon: '📊', hideOnMobile: true }
 ]
 
 const currentRouteName = computed(() => route.name as string)
@@ -73,7 +74,10 @@ const isActive = (name: string) => {
           v-for="item in navItems"
           :key="item.name"
           class="nav-link"
-          :class="{ active: isActive(item.name) }"
+          :class="{ 
+            active: isActive(item.name),
+            'hide-mobile': item.hideOnMobile 
+          }"
           @click="navigateTo(item.path)"
           :aria-current="isActive(item.name) ? 'page' : undefined"
         >
@@ -84,7 +88,7 @@ const isActive = (name: string) => {
       </nav>
 
       <div class="header-actions">
-        <ExportButton />
+        <ExportButton class="hide-mobile" />
         <ThemeToggle />
         
         <!-- 用户头像 - 点击跳转到个人中心 -->
@@ -342,6 +346,13 @@ const isActive = (name: string) => {
   
   @include until-sm {
     font-size: 16px;
+  }
+}
+
+// 移动端隐藏
+.hide-mobile {
+  @include until-sm {
+    display: none !important;
   }
 }
 </style>
