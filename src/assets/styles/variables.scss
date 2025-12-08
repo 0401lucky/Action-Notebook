@@ -1,0 +1,238 @@
+// ============================================
+// 主题变量定义 (Premium Indigo/Violet Theme)
+// ============================================
+
+// 浅色主题 (默认)
+:root {
+  // 主色调 - Indigo/Violet
+  --color-primary: #6366f1; // Indigo 500
+  --color-primary-light: #818cf8; // Indigo 400
+  --color-primary-dark: #4f46e5; // Indigo 600
+  --color-primary-fade: rgba(99, 102, 241, 0.1);
+
+  // 强调色 - Accent
+  --color-accent: #8b5cf6; // Violet 500
+  --color-accent-light: #a78bfa; // Violet 400
+  
+  // 语义色
+  --color-success: #10b981; // Emerald 500
+  --color-success-light: rgba(16, 185, 129, 0.1);
+  --color-warning: #f59e0b; // Amber 500
+  --color-danger: #ef4444; // Red 500
+  --color-danger-light: rgba(239, 68, 68, 0.1);
+  --color-info: #3b82f6; // Blue 500
+  
+  // 优先级颜色
+  --priority-high: #ef4444;
+  --priority-medium: #f59e0b;
+  --priority-low: #10b981;
+  
+  // 心情颜色 (More vibrant)
+  --mood-happy: #fbbf24; // Amber 400
+  --mood-neutral: #9ca3af; // Gray 400
+  --mood-sad: #60a5fa; // Blue 400
+  --mood-excited: #f472b6; // Pink 400
+  --mood-tired: #78716c; // Stone 500
+  
+  // 背景色
+  --bg-primary: #f8fafc; // Slate 50
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9; // Slate 100
+  --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%); // Soft Indigo-Violet Gradient
+  
+  // 玻璃拟态
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --backdrop-blur: blur(12px);
+  
+  // 交互背景
+  --bg-hover: rgba(99, 102, 241, 0.08);
+  --bg-active: rgba(99, 102, 241, 0.12);
+  
+  // 文字色
+  --text-primary: #1e293b; // Slate 800
+  --text-secondary: #64748b; // Slate 500
+  --text-tertiary: #94a3b8; // Slate 400
+  --text-placeholder: #cbd5e1; // Slate 300
+  --text-disabled: #e2e8f0; // Slate 200
+  --text-inverse: #ffffff;
+  
+  // 边框色
+  --border-color: #e2e8f0; // Slate 200
+  --border-color-light: #f1f5f9; // Slate 100
+  --border-color-lighter: #f8fafc; // Slate 50
+  
+  // 阴影 (Soft & Diffused)
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+
+// 深色主题 - 流光玻璃 + 极光手账风格
+[data-theme='dark'] {
+  // 极光色彩系统
+  --aurora-cyan: #22d3ee;
+  --aurora-violet: #a78bfa;
+  --aurora-indigo: #818cf8;
+  --aurora-pink: #f472b6;
+  --aurora-teal: #5eead4;
+  
+  // 主色调 - 更亮更通透
+  --color-primary: #818cf8; // Indigo 400
+  --color-primary-light: #a5b4fc; // Indigo 300
+  --color-primary-dark: #6366f1; // Indigo 500
+  --color-primary-fade: rgba(129, 140, 248, 0.2);
+
+  // 强调色
+  --color-accent: #a78bfa; // Violet 400
+  --color-accent-light: #c4b5fd; // Violet 300
+  
+  // 语义色
+  --color-success: #34d399; // Emerald 400
+  --color-success-light: rgba(52, 211, 153, 0.18);
+  --color-warning: #fbbf24; // Amber 400
+  --color-danger: #f87171; // Red 400
+  --color-danger-light: rgba(248, 113, 113, 0.18);
+  --color-info: #60a5fa; // Blue 400
+  
+  // 优先级颜色
+  --priority-high: #f87171;
+  --priority-medium: #fbbf24;
+  --priority-low: #34d399;
+  
+  // 心情颜色
+  --mood-happy: #fcd34d;
+  --mood-neutral: #9ca3af;
+  --mood-sad: #93c5fd;
+  --mood-excited: #f9a8d4;
+  --mood-tired: #a8a29e;
+  
+  // 背景色
+  --bg-primary: #0f172a; // 深炭色
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  
+  // 高级玻璃拟态 - Premium Glassmorphism (流光玻璃)
+  --glass-bg: rgba(255, 255, 255, 0.025);
+  --glass-bg-hover: rgba(255, 255, 255, 0.045);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-blur: blur(20px);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  
+  // 发光边框渐变 - 顶光效果（顶亮底暗）
+  --glow-border: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  
+  // 内发光 - 玻璃通透感
+  --glass-inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  --glass-inner-glow-strong: inset 0 1px 2px rgba(255, 255, 255, 0.12), inset 0 0 30px rgba(255, 255, 255, 0.02);
+  
+  // 噪点纹理 URL（用于消除塑料感）
+  --noise-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  
+  // 交互背景
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-active: rgba(255, 255, 255, 0.1);
+  
+  // 文字色
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-placeholder: #475569;
+  --text-disabled: #334155;
+  --text-inverse: #0f172a;
+  
+  // 发光文字
+  --text-glow: 0 0 20px rgba(255, 255, 255, 0.3);
+  --text-glow-cyan: 0 0 20px rgba(34, 211, 238, 0.4);
+  --text-glow-violet: 0 0 20px rgba(167, 139, 250, 0.4);
+  
+  // 边框色
+  --border-color: #334155;
+  --border-color-light: #475569;
+  --border-color-lighter: #1e293b;
+  
+  // 阴影
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  
+  // 光晕阴影
+  --shadow-glow-cyan: 0 0 40px rgba(34, 211, 238, 0.15);
+  --shadow-glow-violet: 0 0 40px rgba(167, 139, 250, 0.15);
+  --shadow-glow-indigo: 0 0 40px rgba(129, 140, 248, 0.15);
+}
+
+// ============================================
+// 间距变量
+// ============================================
+:root {
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --spacing-page: 24px;
+  --spacing-section: 32px;
+}
+
+// ============================================
+// 圆角变量
+// ============================================
+:root {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+}
+
+// ============================================
+// 字体变量
+// ============================================
+:root {
+  --font-size-xs: 0.75rem;   // 12px
+  --font-size-sm: 0.875rem;  // 14px
+  --font-size-base: 1rem;    // 16px
+  --font-size-lg: 1.125rem;  // 18px
+  --font-size-xl: 1.25rem;   // 20px
+  --font-size-2xl: 1.5rem;   // 24px
+  --font-size-3xl: 1.875rem; // 30px
+  --font-size-4xl: 2.25rem;  // 36px
+  --font-size-title: var(--font-size-4xl);
+  --font-size-subtitle: var(--font-size-lg);
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+}
+
+// ============================================
+// 动画变量
+// ============================================
+:root {
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
