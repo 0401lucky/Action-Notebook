@@ -118,14 +118,52 @@ const linkSent = ref(false)
 const countdown = ref(0)
 let countdownTimer: ReturnType<typeof setInterval> | null = null
 
-// 邮箱验证正则
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+// 邮箱验证正则（更严格）
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+// 常见邮箱域名拼写错误检测
+const COMMON_TYPOS: Record<string, string> = {
+  'gmai.com': 'gmail.com',
+  'gmial.com': 'gmail.com',
+  'gmal.com': 'gmail.com',
+  'gamil.com': 'gmail.com',
+  'gami.com': 'gmail.com',
+  'gmil.com': 'gmail.com',
+  'gmail.co': 'gmail.com',
+  'gmail.cm': 'gmail.com',
+  'hotmal.com': 'hotmail.com',
+  'hotmai.com': 'hotmail.com',
+  'hotmial.com': 'hotmail.com',
+  'outlok.com': 'outlook.com',
+  'outloo.com': 'outlook.com',
+  'qq.co': 'qq.com',
+  '163.co': '163.com',
+  '126.co': '126.com',
+  'sina.co': 'sina.com',
+  'yahooo.com': 'yahoo.com',
+  'yaho.com': 'yahoo.com'
+}
+
+// 邮箱域名拼写建议
+const emailSuggestion = ref('')
 
 /**
  * 验证邮箱格式
  */
 function validateEmail(emailValue: string): boolean {
-  return EMAIL_REGEX.test(emailValue)
+  if (!EMAIL_REGEX.test(emailValue)) {
+    return false
+  }
+  
+  // 检查常见拼写错误
+  const domain = emailValue.split('@')[1]?.toLowerCase()
+  if (domain && COMMON_TYPOS[domain]) {
+    emailSuggestion.value = COMMON_TYPOS[domain]
+    return false
+  }
+  
+  emailSuggestion.value = ''
+  return true
 }
 
 /**
@@ -142,7 +180,11 @@ function clearEmailError() {
 async function handleSendMagicLink() {
   // 验证邮箱格式
   if (!validateEmail(email.value)) {
-    emailError.value = '请输入有效的邮箱地址'
+    if (emailSuggestion.value) {
+      emailError.value = `您是否想输入 @${emailSuggestion.value}？`
+    } else {
+      emailError.value = '请输入有效的邮箱地址'
+    }
     return
   }
 
