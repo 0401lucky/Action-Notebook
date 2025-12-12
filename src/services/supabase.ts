@@ -59,8 +59,9 @@ if (isValidConfig) {
         detectSessionInUrl: true,
         // 存储键名
         storageKey: 'action-log-auth',
-        // 设置 URL 流程类型为 PKCE（更安全，兼容性更好）
-        flowType: 'pkce'
+        // 使用 implicit 流程以支持跨设备 Magic Link 登录
+        // 注意：PKCE 需要同一设备/浏览器保存的 code_verifier，跨设备会失败
+        flowType: 'implicit'
       }
     })
   } catch (err) {

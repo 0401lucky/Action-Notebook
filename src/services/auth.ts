@@ -146,7 +146,11 @@ export const AuthService = {
         email: email.trim(),
         options: {
           shouldCreateUser: true, // 允许新用户注册
-          emailRedirectTo: window.location.origin // 登录后跳转回应用
+          // 允许通过环境变量覆盖重定向地址（用于跨设备登录时指向线上域名）
+          emailRedirectTo:
+            (import.meta.env.VITE_SITE_URL as string | undefined) ||
+            (import.meta.env.VITE_APP_URL as string | undefined) ||
+            window.location.origin // 默认跳回当前域名
         }
       })
 
