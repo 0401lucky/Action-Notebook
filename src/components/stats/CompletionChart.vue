@@ -21,113 +21,71 @@ let chartInstance: echarts.ECharts | null = null
 
 function initChart() {
   if (!chartRef.value) return
+  
   chartInstance = echarts.init(chartRef.value)
   updateChart()
 }
 
 function updateChart() {
   if (!chartInstance) return
-  const dates = props.data.map(d => {
-    const date = new Date(d.date)
-    return `${date.getMonth() + 1}/${date.getDate()}`
-  })
+
+  const dates = props.data.map(d => d.date)
   const rates = props.data.map(d => d.rate)
 
   const option: echarts.EChartsOption = {
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      borderColor: '#eee',
-      borderWidth: 1,
+    title: {
+      text: props.title,
+      left: 'center',
       textStyle: {
-        color: '#333'
-      },
-      formatter: (params: any) => {
-        const p = params[0]
-        return `
-          <div style="font-weight: bold; margin-bottom: 4px;">${p.name}</div>
-          <div style="display: flex; align-items: center;">
-            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${p.color}; margin-right: 6px;"></span>
-            完成率: <span style="font-weight: bold; margin-left: 4px;">${p.value}%</span>
-          </div>
-        `
+        fontSize: 16,
+        fontWeight: 600
       }
     },
-    grid: {
-      left: '2%',
-      right: '4%',
-      bottom: '5%',
-      top: '10%',
-      containLabel: true
+    tooltip: {
+      trigger: 'axis',
+      formatter: (params: unknown) => {
+        const p = params as { name: string; value: number }[]
+        return `${p[0].name}<br/>完成率: ${p[0].value}%`
+      }
     },
     xAxis: {
       type: 'category',
       data: dates,
-      axisLine: {
-        lineStyle: {
-          color: '#ddd'
-        }
-      },
-      axisTick: {
-        show: false
-      },
       axisLabel: {
-        color: '#666',
-        fontSize: 11,
-        interval: 'auto'
+        rotate: 45,
+        fontSize: 10
       }
     },
     yAxis: {
       type: 'value',
       min: 0,
       max: 100,
-      splitLine: {
-        lineStyle: {
-          color: 'rgba(0, 0, 0, 0.05)',
-          type: 'dashed'
-        }
-      },
       axisLabel: {
-        color: '#999',
         formatter: '{value}%'
       }
     },
-    series: [
-      {
-        data: rates,
-        type: 'line',
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 8,
-        itemStyle: {
-          color: '#6366f1',
-          borderWidth: 2,
-          borderColor: '#fff',
-          shadowColor: 'rgba(99, 102, 241, 0.3)',
-          shadowBlur: 5
-        },
-        lineStyle: {
-          width: 3,
-          color: '#6366f1',
-          shadowColor: 'rgba(99, 102, 241, 0.3)',
-          shadowBlur: 10,
-          shadowOffsetY: 5
-        },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: 'rgba(99, 102, 241, 0.4)'
-            },
-            {
-              offset: 1,
-              color: 'rgba(99, 102, 241, 0.0)'
-            }
-          ])
-        }
+    series: [{
+      data: rates,
+      type: 'line',
+      smooth: true,
+      areaStyle: {
+        opacity: 0.3
+      },
+      lineStyle: {
+        width: 2
+      },
+      itemStyle: {
+        color: '#4a90d9'
       }
-    ]
+    }],
+    grid: {
+      left: '10%',
+      right: '5%',
+      bottom: '15%',
+      top: '15%'
+    }
   }
+
   chartInstance.setOption(option)
 }
 

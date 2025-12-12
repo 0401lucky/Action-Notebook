@@ -49,7 +49,7 @@ interface Props {
   cancelText?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   confirmText: '确认',
   cancelText: '取消'
 })

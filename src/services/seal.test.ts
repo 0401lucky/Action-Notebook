@@ -12,9 +12,6 @@ import type { DailyRecord, Task, JournalEntry, MoodType, Priority } from '@/type
 import {
   unsealRecord,
   sealRecord,
-  canAddTask,
-  canRemoveTask,
-  canModifyTask,
   canEditJournal,
   addTaskToRecord,
   removeTaskFromRecord,
@@ -109,23 +106,6 @@ const unsealedRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
 }).map(record => ({
   ...record,
   id: record.date // 确保 id 和 date 一致
-}))
-
-// 带日记条目的未封存记录生成器
-const unsealedRecordWithEntriesArb: fc.Arbitrary<DailyRecord> = fc.record({
-  id: dateStringArb,
-  date: dateStringArb,
-  tasks: fc.array(taskArb, { maxLength: 10 }),
-  journal: fc.string({ maxLength: 500 }),
-  mood: optionalMoodArb,
-  journalEntries: fc.array(journalEntryArb, { minLength: 1, maxLength: 10 }),
-  isSealed: fc.constant(false),
-  completionRate: fc.nat({ max: 100 }),
-  createdAt: isoDateStringArb,
-  sealedAt: fc.oneof(fc.constant(null), isoDateStringArb)
-}).map(record => ({
-  ...record,
-  id: record.date
 }))
 
 // 带日记条目的已封存记录生成器
@@ -351,17 +331,14 @@ describe('Seal Service Property Tests', () => {
    * *对于任意* 解封后再次封存的记录，sealedAt 应更新为新的封存时间，且新时间晚于原封存时间
    * **Validates: Requirements 5.2**
    */
-  describe('Property 3: 再次封存时间更新', () => {
-    it('再次封存后 sealedAt 应更新为新时间', () => {
-      fc.assert(
-        fc.property(sealedRecordArb, (record) => {
-          // 记录原封存时间
-          const originalSealedAt = record.sealedAt
-          
-          // 解封
-          const unsealedRecord = unsealRecord(record)
-          expect(unsealedRecord).not.toBeNull()
-          expect(unsealedRecord!.isSealed).toBe(false)
+	describe('Property 3: 再次封存时间更新', () => {
+	  it('再次封存后 sealedAt 应更新为新时间', () => {
+	    fc.assert(
+	      fc.property(sealedRecordArb, (record) => {
+	          // 解封
+	          const unsealedRecord = unsealRecord(record)
+	          expect(unsealedRecord).not.toBeNull()
+	          expect(unsealedRecord!.isSealed).toBe(false)
           
           // 再次封存
           const resealedRecord = sealRecord(unsealedRecord!)

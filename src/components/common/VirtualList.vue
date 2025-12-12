@@ -27,7 +27,7 @@
  * 仅渲染可视区域内的项目，优化长列表性能
  * Requirements: 4.1, 4.3
  */
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useVirtualScroll } from '@/composables/useVirtualScroll'
 
 interface Props {

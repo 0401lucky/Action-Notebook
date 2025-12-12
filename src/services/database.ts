@@ -97,6 +97,9 @@ export const DatabaseService = {
       return { success: false, error: createError(DbErrorCodes.AUTH_REQUIRED, '请先登录') }
     }
 
+    // Supabase/PostgREST in 过滤器需要对字符串值加引号
+    const buildInFilter = (ids: string[]): string => `(${ids.map(id => `"${id}"`).join(',')})`
+
     try {
       // 1. 保存/更新 daily_records，附加 user_id
       const { error: recordError } = await supabase
@@ -145,7 +148,7 @@ export const DatabaseService = {
           .delete()
           .eq('record_id', record.id)
           .eq('user_id', userId)
-          .not('id', 'in', `(${currentTaskIds.join(',')})`)
+          .not('id', 'in', buildInFilter(currentTaskIds))
 
         if (deleteError) throw deleteError
       } else {
@@ -185,7 +188,7 @@ export const DatabaseService = {
           .delete()
           .eq('record_id', record.id)
           .eq('user_id', userId)
-          .not('id', 'in', `(${currentEntryIds.join(',')})`)
+          .not('id', 'in', buildInFilter(currentEntryIds))
 
         if (deleteEntriesError) throw deleteEntriesError
       } else {

@@ -23,13 +23,15 @@ export interface UseAnimationReturn {
   createRipple: (el: HTMLElement, event: MouseEvent) => void
 }
 
-const defaultOptions: UseAnimationOptions = {
+const defaultOptions: Required<UseAnimationOptions> = {
   duration: 300,
   easing: 'ease-out'
 }
 
 export function useAnimation(options: UseAnimationOptions = {}): UseAnimationReturn {
-  const { duration, easing } = { ...defaultOptions, ...options }
+  const merged = { ...defaultOptions, ...options }
+  const duration = merged.duration ?? defaultOptions.duration
+  const easing = merged.easing ?? defaultOptions.easing
 
   /**
    * 触发任务完成动画

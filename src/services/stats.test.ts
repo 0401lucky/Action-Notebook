@@ -24,16 +24,17 @@ const taskArb: fc.Arbitrary<Task> = fc.record({
   )
 })
 
-const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
-  id: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
-  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
-  tasks: fc.array(taskArb, { maxLength: 20 }),
-  journal: fc.string({ maxLength: 500 }),
-  mood: fc.option(moodArb, { nil: null }),
-  isSealed: fc.boolean(),
-  completionRate: fc.integer({ min: 0, max: 100 }),
-  createdAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()),
-  sealedAt: fc.option(
+	const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
+	  id: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
+	  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
+	  tasks: fc.array(taskArb, { maxLength: 20 }),
+	  journal: fc.string({ maxLength: 500 }),
+	  mood: fc.option(moodArb, { nil: null }),
+	  journalEntries: fc.constant([]),
+	  isSealed: fc.boolean(),
+	  completionRate: fc.integer({ min: 0, max: 100 }),
+	  createdAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()),
+	  sealedAt: fc.option(
     fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()),
     { nil: null }
   )
@@ -112,16 +113,17 @@ describe('Stats Service Property Tests', () => {
     })
 
     it('should handle records with no mood', () => {
-      const records: DailyRecord[] = [{
-        id: '2024-01-01',
-        date: '2024-01-01',
-        tasks: [],
-        journal: '',
-        mood: null,
-        isSealed: true,
-        completionRate: 0,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        sealedAt: '2024-01-01T23:59:59.000Z'
+	      const records: DailyRecord[] = [{
+	        id: '2024-01-01',
+	        date: '2024-01-01',
+	        tasks: [],
+	        journal: '',
+	        mood: null,
+	        journalEntries: [],
+	        isSealed: true,
+	        completionRate: 0,
+	        createdAt: '2024-01-01T00:00:00.000Z',
+	        sealedAt: '2024-01-01T23:59:59.000Z'
       }]
       
       const distribution = calculateMoodDistribution(records)
@@ -137,12 +139,13 @@ describe('Stats Service Property Tests', () => {
             { id: '1', description: 'Task 1', completed: true, priority: 'high', tags: [], order: 0, createdAt: '', completedAt: '' },
             { id: '2', description: 'Task 2', completed: false, priority: 'medium', tags: [], order: 1, createdAt: '', completedAt: null }
           ],
-          journal: '',
-          mood: 'happy',
-          isSealed: true,
-          completionRate: 50,
-          createdAt: '',
-          sealedAt: ''
+	          journal: '',
+	          mood: 'happy',
+	          journalEntries: [],
+	          isSealed: true,
+	          completionRate: 50,
+	          createdAt: '',
+	          sealedAt: ''
         },
         {
           id: '2024-01-02',
@@ -150,12 +153,13 @@ describe('Stats Service Property Tests', () => {
           tasks: [
             { id: '3', description: 'Task 3', completed: true, priority: 'low', tags: [], order: 0, createdAt: '', completedAt: '' }
           ],
-          journal: '',
-          mood: 'neutral',
-          isSealed: true,
-          completionRate: 100,
-          createdAt: '',
-          sealedAt: ''
+	          journal: '',
+	          mood: 'neutral',
+	          journalEntries: [],
+	          isSealed: true,
+	          completionRate: 100,
+	          createdAt: '',
+	          sealedAt: ''
         }
       ]
       

@@ -15,7 +15,7 @@
     <!-- 编辑区域 -->
     <div class="editor-content-wrapper">
       <EditorContent 
-        :editor="editor" 
+        :editor="editor || undefined" 
         class="editor-content"
       />
     </div>

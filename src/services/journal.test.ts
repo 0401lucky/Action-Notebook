@@ -10,7 +10,6 @@ import { describe, it, expect } from 'vitest'
 import * as fc from 'fast-check'
 import {
   addJournalEntry,
-  editJournalEntry,
   deleteJournalEntry,
   sortEntriesByTime,
   getOverallMood,
@@ -29,9 +28,10 @@ const optionalMoodArb: fc.Arbitrary<MoodType | null> = fc.oneof(
   moodArb
 )
 
-// 有效日记内容生成器（非空白）
+// 有效日记内容生成器（与业务校验保持一致）
+// 由于服务支持富文本（HTML），非空字符串不一定有效（例如仅包含空标签）。
 const validContentArb = fc.string({ minLength: 1, maxLength: 500 })
-  .filter(s => s.trim().length > 0)
+  .filter(s => validateEntryContent(s))
 
 // 空白内容生成器（仅包含空白字符）
 const whitespaceOnlyArb = fc.stringOf(fc.constantFrom(' ', '\t', '\n', '\r'))
@@ -66,6 +66,7 @@ describe('Journal Service Property Tests', () => {
           validContentArb,
           optionalMoodArb,
           (entries, content, mood) => {
+            fc.pre(validateEntryContent(content))
             const originalLength = entries.length
             const result = addJournalEntry(entries, content, mood)
             
@@ -85,6 +86,7 @@ describe('Journal Service Property Tests', () => {
           validContentArb,
           optionalMoodArb,
           (entries, content, mood) => {
+            fc.pre(validateEntryContent(content))
             const result = addJournalEntry(entries, content, mood)
             
             expect(result).not.toBeNull()
@@ -103,6 +105,7 @@ describe('Journal Service Property Tests', () => {
           validContentArb,
           optionalMoodArb,
           (entries, content, mood) => {
+            fc.pre(validateEntryContent(content))
             const beforeAdd = new Date()
             const result = addJournalEntry(entries, content, mood)
             const afterAdd = new Date()
@@ -125,6 +128,7 @@ describe('Journal Service Property Tests', () => {
           validContentArb,
           optionalMoodArb,
           (entries, content, mood) => {
+            fc.pre(validateEntryContent(content))
             const result = addJournalEntry(entries, content, mood)
             
             expect(result).not.toBeNull()

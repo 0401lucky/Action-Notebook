@@ -21,21 +21,6 @@ const validPomodoroSettingsArb: fc.Arbitrary<PomodoroSettings> = fc.record({
 })
 
 /**
- * 专注记录生成器
- */
-const focusRecordArb: fc.Arbitrary<FocusRecord> = fc.record({
-  id: fc.uuid(),
-  taskId: fc.option(fc.uuid(), { nil: null }),
-  taskDescription: fc.option(
-    fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
-    { nil: null }
-  ),
-  duration: fc.integer({ min: 1, max: 60 }),
-  completedAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
-  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString().split('T')[0])
-})
-
-/**
  * 今日专注记录生成器（日期固定为今天）
  */
 const todayFocusRecordArb: fc.Arbitrary<FocusRecord> = fc.record({

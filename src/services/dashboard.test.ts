@@ -293,10 +293,10 @@ describe('Property 6: 日记列表截取和排序', () => {
   })
 
   // 生成日记记录的 arbitrary
-  const recordArb: fc.Arbitrary<DailyRecord> = fc.record({
-    id: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => {
-      const year = d.getFullYear()
-      const month = String(d.getMonth() + 1).padStart(2, '0')
+	  const recordArb: fc.Arbitrary<DailyRecord> = fc.record({
+	    id: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => {
+	      const year = d.getFullYear()
+	      const month = String(d.getMonth() + 1).padStart(2, '0')
       const day = String(d.getDate()).padStart(2, '0')
       return `${year}-${month}-${day}`
     }),
@@ -306,13 +306,14 @@ describe('Property 6: 日记列表截取和排序', () => {
       const day = String(d.getDate()).padStart(2, '0')
       return `${year}-${month}-${day}`
     }),
-    tasks: fc.array(taskArb, { minLength: 0, maxLength: 5 }),
-    journal: fc.string(),
-    mood: fc.option(fc.constantFrom('happy', 'neutral', 'sad', 'excited', 'tired') as fc.Arbitrary<MoodType>, { nil: null }),
-    isSealed: fc.boolean(),
-    completionRate: fc.integer({ min: 0, max: 100 }),
-    createdAt: fc.date().map(d => d.toISOString()),
-    sealedAt: fc.option(fc.date().map(d => d.toISOString()), { nil: null })
+	    tasks: fc.array(taskArb, { minLength: 0, maxLength: 5 }),
+	    journal: fc.string(),
+	    mood: fc.option(fc.constantFrom('happy', 'neutral', 'sad', 'excited', 'tired') as fc.Arbitrary<MoodType>, { nil: null }),
+	    journalEntries: fc.constant([]),
+	    isSealed: fc.boolean(),
+	    completionRate: fc.integer({ min: 0, max: 100 }),
+	    createdAt: fc.date().map(d => d.toISOString()),
+	    sealedAt: fc.option(fc.date().map(d => d.toISOString()), { nil: null })
   })
 
   it('对于任意日记数组，显示数量应不超过最大限制', () => {
@@ -463,13 +464,14 @@ describe('Property 8: 本周统计计算', () => {
         const day = String(d.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       }),
-      tasks: fc.array(taskArb, { minLength: 0, maxLength: 10 }),
-      journal: fc.string(),
-      mood: fc.option(fc.constantFrom('happy', 'neutral', 'sad', 'excited', 'tired') as fc.Arbitrary<MoodType>, { nil: null }),
-      isSealed: fc.boolean(),
-      completionRate: fc.integer({ min: 0, max: 100 }),
-      createdAt: fc.date().map(d => d.toISOString()),
-      sealedAt: fc.option(fc.date().map(d => d.toISOString()), { nil: null })
+	      tasks: fc.array(taskArb, { minLength: 0, maxLength: 10 }),
+	      journal: fc.string(),
+	      mood: fc.option(fc.constantFrom('happy', 'neutral', 'sad', 'excited', 'tired') as fc.Arbitrary<MoodType>, { nil: null }),
+	      journalEntries: fc.constant([]),
+	      isSealed: fc.boolean(),
+	      completionRate: fc.integer({ min: 0, max: 100 }),
+	      createdAt: fc.date().map(d => d.toISOString()),
+	      sealedAt: fc.option(fc.date().map(d => d.toISOString()), { nil: null })
     })
   }
 
@@ -571,16 +573,17 @@ describe('Property 9: 连续打卡天数计算', () => {
     
     for (let i = 0; i < consecutiveDays; i++) {
       const dateKey = formatDateKey(date)
-      records.push({
-        id: dateKey,
-        date: dateKey,
-        tasks: [],
-        journal: '测试日记',
-        mood: 'happy',
-        isSealed: true,
-        completionRate: 100,
-        createdAt: date.toISOString(),
-        sealedAt: date.toISOString()
+	      records.push({
+	        id: dateKey,
+	        date: dateKey,
+	        tasks: [],
+	        journal: '测试日记',
+	        mood: 'happy',
+	        journalEntries: [],
+	        isSealed: true,
+	        completionRate: 100,
+	        createdAt: date.toISOString(),
+	        sealedAt: date.toISOString()
       })
       date.setDate(date.getDate() - 1)
     }
@@ -638,16 +641,17 @@ describe('Property 9: 连续打卡天数计算', () => {
   it('未封存的记录不应计入连续天数', () => {
     const referenceDate = new Date('2025-01-15')
     const records: DailyRecord[] = [
-      {
-        id: '2025-01-15',
-        date: '2025-01-15',
-        tasks: [],
-        journal: '测试',
-        mood: 'happy',
-        isSealed: false, // 未封存
-        completionRate: 100,
-        createdAt: referenceDate.toISOString(),
-        sealedAt: null
+	      {
+	        id: '2025-01-15',
+	        date: '2025-01-15',
+	        tasks: [],
+	        journal: '测试',
+	        mood: 'happy',
+	        journalEntries: [],
+	        isSealed: false, // 未封存
+	        completionRate: 100,
+	        createdAt: referenceDate.toISOString(),
+	        sealedAt: null
       }
     ]
     

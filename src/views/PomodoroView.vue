@@ -164,9 +164,6 @@ const dailyStore = useDailyStore()
 // 计时器 interval ID
 const timerInterval = ref<number | null>(null)
 
-// 音频元素引用
-let notificationSound: HTMLAudioElement | null = null
-
 /**
  * 初始化提示音
  * 使用 Web Audio API 生成简单的提示音

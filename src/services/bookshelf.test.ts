@@ -69,39 +69,6 @@ const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
 // 非空 DailyRecord 列表生成器（限制数量以提高测试速度）
 const nonEmptyRecordsArb = fc.array(dailyRecordArb, { minLength: 1, maxLength: 10 })
 
-// 生成特定月份的日期
-function generateDateInMonth(year: number, month: number): string {
-  const day = Math.floor(Math.random() * 28) + 1
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-}
-
-// 生成跨多个月份的记录
-const multiMonthRecordsArb = fc.tuple(
-  fc.integer({ min: 2020, max: 2030 }),
-  fc.array(fc.integer({ min: 1, max: 12 }), { minLength: 1, maxLength: 6 })
-).chain(([year, months]) => {
-  // 为每个月份生成 1-3 条记录
-  const recordPromises = months.flatMap(month => {
-    const count = Math.floor(Math.random() * 3) + 1
-    return Array.from({ length: count }, () => {
-      const date = generateDateInMonth(year, month)
-      return fc.record({
-        id: fc.constant(date),
-        date: fc.constant(date),
-        tasks: fc.constant([]),
-        journal: fc.string({ maxLength: 100 }),
-        mood: optionalMoodArb,
-        journalEntries: journalEntriesArb,
-        isSealed: fc.boolean(),
-        completionRate: fc.integer({ min: 0, max: 100 }),
-        createdAt: fc.constant(new Date().toISOString()),
-        sealedAt: fc.constant(null)
-      })
-    })
-  })
-  return fc.tuple(...recordPromises)
-})
-
 describe('Bookshelf Service Property Tests', () => {
   /**
    * **Feature: seal-enhancement, Property 10: 日记本按月分组**

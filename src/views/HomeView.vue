@@ -65,7 +65,7 @@
  * 
  * Requirements: 1.1, 1.2, 1.3 (骨架屏加载状态)
  */
-import { onMounted, toRef, ref } from 'vue'
+	import { onMounted, toRef, ref, watch } from 'vue'
 import { useDailyStore } from '@/stores/daily'
 import { useAutoSave } from '@/composables/useAutoSave'
 import TaskInput from '@/components/task/TaskInput.vue'
@@ -92,17 +92,40 @@ useAutoSave(toRef(store, 'currentRecord'), toRef(store, 'isDataLoading'))
  * 加载今日数据
  * 加载完成后隐藏骨架屏
  */
-async function loadData(): Promise<void> {
-  isLoading.value = true
-  
-  try {
-    store.loadToday()
-    // 最小加载时间，让过渡动画更自然
-    await new Promise(resolve => setTimeout(resolve, 500))
-  } finally {
-    isLoading.value = false
-  }
-}
+	const MIN_SKELETON_MS = 200
+
+	function waitForDataLoaded(): Promise<void> {
+	  if (!store.isDataLoading) return Promise.resolve()
+	  return new Promise(resolve => {
+	    const stop = watch(
+	      () => store.isDataLoading,
+	      (loading) => {
+	        if (!loading) {
+	          stop()
+	          resolve()
+	        }
+	      },
+	      { immediate: true }
+	    )
+	  })
+	}
+
+	async function loadData(): Promise<void> {
+	  const startedAt = performance.now()
+	  isLoading.value = true
+	  
+	  try {
+	    store.loadToday()
+	    await waitForDataLoaded()
+	    
+	    const elapsed = performance.now() - startedAt
+	    if (elapsed < MIN_SKELETON_MS) {
+	      await new Promise(resolve => setTimeout(resolve, MIN_SKELETON_MS - elapsed))
+	    }
+	  } finally {
+	    isLoading.value = false
+	  }
+	}
 
 onMounted(() => {
   loadData()
@@ -122,14 +145,6 @@ function handleDeleteTask(id: string) {
 
 function handleReorderTasks(tasks: Task[]) {
   store.updateTaskOrder(tasks)
-}
-
-function handleUpdateJournal(content: string) {
-  store.updateJournal(content)
-}
-
-function handleUpdateMood(mood: MoodType) {
-  store.updateMood(mood)
 }
 
 // 日记条目操作

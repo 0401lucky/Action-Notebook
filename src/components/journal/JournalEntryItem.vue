@@ -69,7 +69,7 @@
 
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import type { JournalEntry, MoodType } from '@/types'
 import RichTextEditor from './RichTextEditor.vue'
 import { normalizeContent, validateRichContent } from '@/services/richText'

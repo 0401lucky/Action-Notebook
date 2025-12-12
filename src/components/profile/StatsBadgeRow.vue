@@ -24,7 +24,7 @@ interface Props {
   animate?: boolean  // 是否启用数字动画，默认 true
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   animate: true
 })
 

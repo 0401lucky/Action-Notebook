@@ -93,7 +93,7 @@ interface Emits {
   (e: 'delete', id: string): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   readonly: false,
   placeholder: '记录此刻的想法、感受或事件...'
 })

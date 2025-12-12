@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { SearchQuery, MoodType } from '@/types'
 import BaseCard from '@/components/common/BaseCard.vue'
 import BaseInput from '@/components/common/BaseInput.vue'
@@ -19,6 +19,21 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const localQuery = ref<SearchQuery>({ ...props.modelValue })
+
+// BaseInput 的 v-model 不接受 null，这里做空值归一化
+const startDateModel = computed<string>({
+  get: () => localQuery.value.startDate ?? '',
+  set: (value) => {
+    localQuery.value.startDate = value ? value : null
+  }
+})
+
+const endDateModel = computed<string>({
+  get: () => localQuery.value.endDate ?? '',
+  set: (value) => {
+    localQuery.value.endDate = value ? value : null
+  }
+})
 
 const moodOptions: { value: MoodType | ''; label: string; emoji: string }[] = [
   { value: '', label: '全部心情', emoji: '' },
@@ -91,7 +106,7 @@ function handleMoodChange(event: Event) {
 
       <div class="search-filter__field search-filter__field--start">
         <BaseInput
-          v-model="localQuery.startDate"
+          v-model="startDateModel"
           type="date"
           label="开始日期"
         />
@@ -99,7 +114,7 @@ function handleMoodChange(event: Event) {
 
       <div class="search-filter__field search-filter__field--end">
         <BaseInput
-          v-model="localQuery.endDate"
+          v-model="endDateModel"
           type="date"
           label="结束日期"
         />

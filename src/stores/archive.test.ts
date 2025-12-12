@@ -18,16 +18,17 @@ const taskArb: fc.Arbitrary<Task> = fc.record({
   completedAt: fc.option(fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()), { nil: null })
 })
 
-const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
-  id: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
-  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
-  tasks: fc.array(taskArb, { maxLength: 10 }),
-  journal: fc.string({ maxLength: 500 }),
-  mood: fc.option(moodArb, { nil: null }),
-  isSealed: fc.constant(true), // 归档记录必须是已封存的
-  completionRate: fc.integer({ min: 0, max: 100 }),
-  createdAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()),
-  sealedAt: fc.option(fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()), { nil: null })
+	const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
+	  id: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
+	  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString().split('T')[0]),
+	  tasks: fc.array(taskArb, { maxLength: 10 }),
+	  journal: fc.string({ maxLength: 500 }),
+	  mood: fc.option(moodArb, { nil: null }),
+	  journalEntries: fc.constant([]),
+	  isSealed: fc.constant(true), // 归档记录必须是已封存的
+	  completionRate: fc.integer({ min: 0, max: 100 }),
+	  createdAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()),
+	  sealedAt: fc.option(fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }).map(d => d.toISOString()), { nil: null })
 }).map(record => ({
   ...record,
   date: record.id // 确保 id 和 date 一致

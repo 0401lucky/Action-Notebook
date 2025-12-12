@@ -1,5 +1,8 @@
 /// <reference types="vite/client" />
 
+// 使该 d.ts 成为模块，以便正确扩展 vue-router 的类型而非覆盖
+import 'vue-router'
+
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'
   const component: DefineComponent<{}, {}, any>

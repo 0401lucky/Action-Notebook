@@ -21,16 +21,17 @@ const taskArb: fc.Arbitrary<Task> = fc.record({
   )
 })
 
-const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
-  id: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString().split('T')[0]),
-  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString().split('T')[0]),
-  tasks: fc.array(taskArb, { maxLength: 20 }),
-  journal: fc.string({ maxLength: 1000 }),
-  mood: fc.option(moodArb, { nil: null }),
-  isSealed: fc.boolean(),
-  completionRate: fc.integer({ min: 0, max: 100 }),
-  createdAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
-  sealedAt: fc.option(
+	const dailyRecordArb: fc.Arbitrary<DailyRecord> = fc.record({
+	  id: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString().split('T')[0]),
+	  date: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString().split('T')[0]),
+	  tasks: fc.array(taskArb, { maxLength: 20 }),
+	  journal: fc.string({ maxLength: 1000 }),
+	  mood: fc.option(moodArb, { nil: null }),
+	  journalEntries: fc.constant([]),
+	  isSealed: fc.boolean(),
+	  completionRate: fc.integer({ min: 0, max: 100 }),
+	  createdAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
+	  sealedAt: fc.option(
     fc.date({ min: new Date('2020-01-01'), max: new Date('2030-12-31') }).map(d => d.toISOString()),
     { nil: null }
   )

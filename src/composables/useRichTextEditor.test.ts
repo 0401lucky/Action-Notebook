@@ -102,19 +102,13 @@ describe('useRichTextEditor Property Tests', () => {
       strike: 's'
     }
 
-    /**
-     * 格式化类型到 toggle 命令的映射
-     */
-    const formatToCommand: Record<string, string> = {
-      bold: 'toggleBold',
-      italic: 'toggleItalic',
-      strike: 'toggleStrike'
-    }
-
-    it('对任意文本应用加粗格式，输出 HTML 应包含 <strong> 标签', () => {
-      fc.assert(
-        fc.property(
-          validTextArb,
+	    /**
+	     * 格式化类型到 toggle 命令的映射
+	     */
+	    it('对任意文本应用加粗格式，输出 HTML 应包含 <strong> 标签', () => {
+	      fc.assert(
+	        fc.property(
+	          validTextArb,
           (text) => {
             // 创建编辑器并设置内容
             editor = createTestEditor(`<p>${text}</p>`)
@@ -532,33 +526,11 @@ describe('useRichTextEditor Property Tests', () => {
    * 
    * **Validates: Requirements 4.3**
    */
-  describe('Property 4: 代码块空白保留', () => {
-    /**
-     * 生成包含空白字符的代码文本
-     * - 包含空格、制表符、换行符
-     * - 不包含 HTML 特殊字符
-     */
-    const codeWithWhitespaceArb = fc.tuple(
-      // 代码行（不含特殊字符）
-      fc.array(
-        fc.string({ minLength: 1, maxLength: 30 })
-          .filter(s => !/<|>|&/.test(s))
-          .filter(s => !/[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(s)),
-        { minLength: 1, maxLength: 5 }
-      ),
-      // 缩进空格数
-      fc.integer({ min: 0, max: 8 }),
-      // 是否使用制表符
-      fc.boolean()
-    ).map(([lines, indentSpaces, useTabs]) => {
-      const indent = useTabs ? '\t'.repeat(Math.ceil(indentSpaces / 4)) : ' '.repeat(indentSpaces)
-      return lines.map(line => indent + line).join('\n')
-    }).filter(s => s.trim().length > 0)
-
-    /**
-     * 生成简单的带空格的代码文本
-     */
-    const simpleCodeWithSpacesArb = fc.tuple(
+	  describe('Property 4: 代码块空白保留', () => {
+	    /**
+	     * 生成简单的带空格的代码文本
+	     */
+	    const simpleCodeWithSpacesArb = fc.tuple(
       fc.string({ minLength: 1, maxLength: 20 }).filter(s => !/<|>|&/.test(s) && s.trim().length > 0),
       fc.integer({ min: 1, max: 4 }),
       fc.string({ minLength: 1, maxLength: 20 }).filter(s => !/<|>|&/.test(s) && s.trim().length > 0)

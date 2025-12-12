@@ -119,7 +119,7 @@ async function loadAllData(): Promise<void> {
     
     // 加载用户资料（如果已登录）
     if (authStore.user?.id) {
-      loadPromises.push(profileStore.loadProfile(authStore.user.id))
+      loadPromises.push(profileStore.loadProfile(authStore.user.id).then(() => {}))
     }
     
     await Promise.all(loadPromises)
