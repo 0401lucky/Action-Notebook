@@ -28,22 +28,50 @@ export const useAuthStore = defineStore('auth', () => {
   // Actions
 
   /**
-   * 发送 Magic Link 到邮箱
+   * 发送邮箱验证码（OTP）到邮箱
    * @param email - 用户邮箱
    * @returns 是否发送成功
    */
-  async function sendMagicLink(email: string): Promise<boolean> {
+  async function sendEmailOtp(email: string): Promise<boolean> {
     isLoading.value = true
     error.value = null
 
     try {
-      const result = await AuthService.sendMagicLink(email)
+      const result = await AuthService.sendEmailOtp(email)
       
       if (!result.success) {
         error.value = result.error?.message || '发送登录链接失败'
         return false
       }
 
+      return true
+    } catch (err) {
+      error.value = '网络连接失败，请检查网络'
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
+   * 验证邮箱验证码（OTP）
+   * @param email - 用户邮箱
+   * @param code - 6 位验证码
+   */
+  async function verifyEmailOtp(email: string, code: string): Promise<boolean> {
+    isLoading.value = true
+    error.value = null
+
+    try {
+      const result = await AuthService.verifyEmailOtp(email, code)
+
+      if (!result.success || !result.data) {
+        error.value = result.error?.message || '验证码验证失败'
+        return false
+      }
+
+      session.value = result.data.session
+      user.value = result.data.user
       return true
     } catch (err) {
       error.value = '网络连接失败，请检查网络'
@@ -93,20 +121,20 @@ export const useAuthStore = defineStore('auth', () => {
 
   /**
    * 初始化认证状态
-   * 在应用启动时调用，恢复会话状态并处理 Magic Link 回调
+   * 在应用启动时调用，恢复会话状态并处理认证回调
    */
   async function initialize(): Promise<void> {
     isLoading.value = true
     error.value = null
 
     try {
-      // 先设置监听器，确保能捕获 Magic Link 回调
+      // 先设置监听器，确保能捕获认证回调
       AuthService.onAuthStateChange((newSession, newUser) => {
         session.value = newSession
         user.value = newUser
       })
 
-      // 获取当前会话（会自动处理 URL 中的 Magic Link token）
+      // 获取当前会话（会自动处理 URL 中的认证信息）
       const currentSession = await AuthService.getSession()
       
       if (currentSession) {
@@ -147,7 +175,8 @@ export const useAuthStore = defineStore('auth', () => {
     // Getters
     isAuthenticated,
     // Actions
-    sendMagicLink,
+    sendEmailOtp,
+    verifyEmailOtp,
     signOut,
     initialize,
     clearError,

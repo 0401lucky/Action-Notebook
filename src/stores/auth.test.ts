@@ -7,7 +7,8 @@ import type { Session, User } from '@supabase/supabase-js'
 // Mock AuthService
 vi.mock('@/services/auth', () => ({
   AuthService: {
-    sendMagicLink: vi.fn(),
+    sendEmailOtp: vi.fn(),
+    verifyEmailOtp: vi.fn(),
     getSession: vi.fn(),
     signOut: vi.fn(),
     onAuthStateChange: vi.fn(() => () => {})
@@ -135,12 +136,12 @@ describe('AuthStore Property Tests', () => {
 
   /**
    * **Feature: user-auth, Property 5: 异步操作期间的加载状态**
-   * *对于任意*异步认证操作（sendMagicLink），
+   * *对于任意*异步认证操作（sendEmailOtp），
    * 操作进行中 isLoading 状态应为 true，完成后应为 false。
    * **Validates: Requirements 6.1, 6.2**
    */
   describe('Property 5: Loading state during async operations', () => {
-    it('sendMagicLink sets loading state correctly', async () => {
+    it('sendEmailOtp sets loading state correctly', async () => {
       await fc.assert(
         fc.asyncProperty(
           validEmailArb,
@@ -154,10 +155,10 @@ describe('AuthStore Property Tests', () => {
               resolvePromise = resolve
             })
 
-            vi.mocked(AuthService.sendMagicLink).mockReturnValue(controlledPromise)
+            vi.mocked(AuthService.sendEmailOtp).mockReturnValue(controlledPromise)
 
             // 开始操作
-            const sendPromise = store.sendMagicLink(email)
+            const sendPromise = store.sendEmailOtp(email)
 
             // 操作进行中，isLoading 应为 true
             expect(store.isLoading).toBe(true)
@@ -176,9 +177,9 @@ describe('AuthStore Property Tests', () => {
   })
 
   /**
-   * 补充测试：发送 Magic Link 失败应设置错误消息
+   * 补充测试：发送邮箱验证码失败应设置错误消息
    */
-  it('Failed sendMagicLink sets error message', async () => {
+  it('Failed sendEmailOtp sets error message', async () => {
     await fc.assert(
       fc.asyncProperty(
         validEmailArb,
@@ -187,12 +188,12 @@ describe('AuthStore Property Tests', () => {
           const store = useAuthStore()
           store.$reset()
 
-          vi.mocked(AuthService.sendMagicLink).mockResolvedValue({
+          vi.mocked(AuthService.sendEmailOtp).mockResolvedValue({
             success: false,
             error: { code: 'SEND_FAILED', message: errorMessage }
           })
 
-          const result = await store.sendMagicLink(email)
+          const result = await store.sendEmailOtp(email)
 
           expect(result).toBe(false)
           expect(store.error).toBe(errorMessage)

@@ -8,13 +8,17 @@ import LoginView from './LoginView.vue'
 vi.mock('vue-router', () => ({
   useRouter: () => ({
     push: vi.fn()
+  }),
+  useRoute: () => ({
+    query: {}
   })
 }))
 
 // Mock AuthService
 vi.mock('@/services/auth', () => ({
   AuthService: {
-    sendMagicLink: vi.fn(),
+    sendEmailOtp: vi.fn(),
+    verifyEmailOtp: vi.fn(),
     getSession: vi.fn(),
     signOut: vi.fn(),
     onAuthStateChange: vi.fn(() => () => {})

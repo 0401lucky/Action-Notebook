@@ -24,8 +24,8 @@ const showLoading = computed(() => !isAuthInitialized.value)
  * - 3.1: 应用启动时自动恢复会话
  * - 3.2: 会话过期时自动刷新令牌
  * - 3.3: 令牌刷新失败时重定向到登录页
- * - Magic Link 回调处理
- */
+   * - 认证回调处理
+   */
 onMounted(async () => {
   // 加载设置
   settingsStore.loadSettings()

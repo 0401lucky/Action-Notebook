@@ -117,9 +117,10 @@ export function isChineseMessage(message: string): boolean {
  */
 export const AuthService = {
   /**
-   * 发送 Magic Link 到邮箱
+   * 发送邮箱验证码（OTP）
+   * 用户可在任意设备输入验证码完成登录/注册
    */
-  async sendMagicLink(email: string): Promise<AuthResult> {
+  async sendEmailOtp(email: string): Promise<AuthResult> {
     if (!isSupabaseConfigured || !supabase) {
       return {
         success: false,
@@ -145,12 +146,7 @@ export const AuthService = {
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
-          shouldCreateUser: true, // 允许新用户注册
-          // 允许通过环境变量覆盖重定向地址（用于跨设备登录时指向线上域名）
-          emailRedirectTo:
-            (import.meta.env.VITE_SITE_URL as string | undefined) ||
-            (import.meta.env.VITE_APP_URL as string | undefined) ||
-            window.location.origin // 默认跳回当前域名
+          shouldCreateUser: true // 允许新用户注册
         }
       })
 
@@ -165,6 +161,83 @@ export const AuthService = {
       }
 
       return { success: true }
+    } catch (err) {
+      return {
+        success: false,
+        error: {
+          code: 'NETWORK_ERROR',
+          message: '网络连接失败，请检查网络'
+        }
+      }
+    }
+  },
+
+  /**
+   * 验证邮箱验证码（OTP）
+   */
+  async verifyEmailOtp(
+    email: string,
+    code: string
+  ): Promise<AuthResult<{ session: Session; user: User }>> {
+    if (!isSupabaseConfigured || !supabase) {
+      return {
+        success: false,
+        error: {
+          code: 'SUPABASE_NOT_CONFIGURED',
+          message: '服务未配置，请稍后重试'
+        }
+      }
+    }
+
+    if (!validateEmail(email)) {
+      return {
+        success: false,
+        error: {
+          code: 'INVALID_EMAIL',
+          message: '请输入有效的邮箱地址'
+        }
+      }
+    }
+
+    const trimmedCode = code.trim()
+    if (!/^\d{6}$/.test(trimmedCode)) {
+      return {
+        success: false,
+        error: {
+          code: 'INVALID_OTP',
+          message: '请输入 6 位验证码'
+        }
+      }
+    }
+
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token: trimmedCode,
+        type: 'email'
+      })
+
+      if (error) {
+        return {
+          success: false,
+          error: {
+            code: error.code || 'UNKNOWN_ERROR',
+            message: mapSupabaseError(error)
+          }
+        }
+      }
+
+      if (!data.session || !data.user) {
+        return {
+          success: false,
+          error: {
+            code: 'NO_SESSION',
+            message: '登录失败，请重试'
+          }
+        }
+      }
+
+      return { success: true, data: { session: data.session, user: data.user } }
     } catch (err) {
       return {
         success: false,

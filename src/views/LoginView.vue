@@ -11,14 +11,14 @@
           <div class="login-view__logo">📔</div>
           <h1 class="login-view__title">行动手帐</h1>
           <p class="login-view__subtitle">
-            {{ linkSent ? '查看邮箱' : '欢迎使用' }}
+            {{ codeSent ? '输入验证码' : '欢迎使用' }}
           </p>
         </div>
 
         <!-- 表单区域 -->
         <Transition name="slide-fade" mode="out-in">
           <!-- 邮箱输入 -->
-          <div v-if="!linkSent" key="email" class="login-view__form">
+          <div v-if="!codeSent" key="email" class="login-view__form">
             <BaseInput
               ref="emailInputRef"
               v-model="email"
@@ -27,7 +27,7 @@
               type="email"
               :error="emailError"
               :disabled="authStore.isLoading"
-              @keyup.enter="handleSendMagicLink"
+              @keyup.enter="handleSendEmailOtp"
               @update:modelValue="clearEmailError"
             >
               <template #prefix>📧</template>
@@ -38,20 +38,37 @@
               block
               :loading="authStore.isLoading"
               :disabled="!email"
-              @click="handleSendMagicLink"
+              @click="handleSendEmailOtp"
             >
-              发送登录链接
+              发送验证码
             </BaseButton>
           </div>
 
-          <!-- 发送成功提示 -->
+          <!-- 验证码输入 -->
           <div v-else key="sent" class="login-view__form login-view__sent">
             <div class="sent-icon">✉️</div>
-            <p class="sent-title">登录链接已发送</p>
+            <p class="sent-title">验证码已发送</p>
             <p class="sent-hint">
-              我们已向 <strong>{{ email }}</strong> 发送了一封包含登录链接的邮件，请点击邮件中的链接完成登录。
+              我们已向 <strong>{{ email }}</strong> 发送 6 位验证码，请在下方输入完成登录。
             </p>
             <p class="sent-note">如果没有收到邮件，请检查垃圾邮件文件夹。</p>
+
+            <VerificationCodeInput
+              ref="codeInputRef"
+              v-model="codeDigits"
+              :disabled="authStore.isLoading"
+              @complete="handleVerifyCode"
+            />
+
+            <BaseButton
+              variant="primary"
+              block
+              :loading="authStore.isLoading"
+              :disabled="codeDigits.join('').length !== 6"
+              @click="() => handleVerifyCode(codeDigits.join(''))"
+            >
+              验证并登录
+            </BaseButton>
 
             <!-- 重新发送 -->
             <div class="login-view__resend">
@@ -68,9 +85,9 @@
                 variant="ghost"
                 size="sm"
                 :loading="authStore.isLoading"
-                @click="handleResendMagicLink"
+                @click="handleResendEmailOtp"
               >
-                重新发送登录链接
+                重新发送验证码
               </BaseButton>
             </div>
 
@@ -98,21 +115,27 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import BaseCard from '@/components/common/BaseCard.vue'
 import BaseInput from '@/components/common/BaseInput.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+import { VerificationCodeInput } from '@/components/auth'
 
 // 状态
 const authStore = useAuthStore()
+const router = useRouter()
+const route = useRoute()
 
 // 组件引用
 const emailInputRef = ref<InstanceType<typeof BaseInput> | null>(null)
+const codeInputRef = ref<InstanceType<typeof VerificationCodeInput> | null>(null)
 
 // 表单状态
 const email = ref('')
 const emailError = ref('')
-const linkSent = ref(false)
+const codeSent = ref(false)
+const codeDigits = ref<string[]>([])
 
 // 倒计时状态
 const countdown = ref(0)
@@ -175,9 +198,9 @@ function clearEmailError() {
 }
 
 /**
- * 发送 Magic Link
+ * 发送邮箱验证码
  */
-async function handleSendMagicLink() {
+async function handleSendEmailOtp() {
   // 验证邮箱格式
   if (!validateEmail(email.value)) {
     if (emailSuggestion.value) {
@@ -189,23 +212,27 @@ async function handleSendMagicLink() {
   }
 
   authStore.clearError()
-  const success = await authStore.sendMagicLink(email.value)
+  const success = await authStore.sendEmailOtp(email.value)
 
   if (success) {
-    linkSent.value = true
+    codeSent.value = true
+    codeDigits.value = []
     startCountdown()
+    nextTick(() => codeInputRef.value?.focus())
   }
 }
 
 /**
- * 重新发送 Magic Link
+ * 重新发送邮箱验证码
  */
-async function handleResendMagicLink() {
+async function handleResendEmailOtp() {
   authStore.clearError()
-  const success = await authStore.sendMagicLink(email.value)
+  const success = await authStore.sendEmailOtp(email.value)
 
   if (success) {
+    codeDigits.value = []
     startCountdown()
+    nextTick(() => codeInputRef.value?.focus())
   }
 }
 
@@ -213,7 +240,8 @@ async function handleResendMagicLink() {
  * 返回邮箱输入
  */
 function handleBackToEmail() {
-  linkSent.value = false
+  codeSent.value = false
+  codeDigits.value = []
   authStore.clearError()
   stopCountdown()
 
@@ -221,6 +249,20 @@ function handleBackToEmail() {
     // Focus logic might need adjustment depending on BaseInput implementation
     // Assuming BaseInput exposes focus method or we access the input element
   })
+}
+
+/**
+ * 验证验证码并登录
+ */
+async function handleVerifyCode(code: string) {
+  authStore.clearError()
+  const success = await authStore.verifyEmailOtp(email.value, code)
+  if (success) {
+    const redirectPath = (route.query.redirect as string | undefined) || '/dashboard'
+    router.push(redirectPath)
+  } else {
+    codeInputRef.value?.clear()
+  }
 }
 
 /**

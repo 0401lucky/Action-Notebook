@@ -55,12 +55,11 @@ if (isValidConfig) {
         storage: storage,
         // 自动刷新令牌
         autoRefreshToken: true,
-        // 检测 URL 中的会话信息（Magic Link 回调）
+        // 检测 URL 中的会话信息（认证回调）
         detectSessionInUrl: true,
         // 存储键名
         storageKey: 'action-log-auth',
-        // 使用 implicit 流程以支持跨设备 Magic Link 登录
-        // 注意：PKCE 需要同一设备/浏览器保存的 code_verifier，跨设备会失败
+        // 使用 implicit 流程，配合邮箱验证码可跨设备登录
         flowType: 'implicit'
       }
     })
